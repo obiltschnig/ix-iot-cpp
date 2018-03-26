@@ -32,7 +32,7 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
                 "\"temperature\":" << temperature <<
             "}"
         "}";
-	std::string json{jsonStream.str()};
+	const auto json{jsonStream.str()};
 
 	boost::asio::io_context ioc;
 	tcp::resolver resolver{ioc};

@@ -26,7 +26,7 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
                 "\"temperature\":" << temperature <<
             "}"
         "}";
-	std::string json{jsonStream.str()};
+	const auto json{jsonStream.str()};
 
 	Poco::Net::HTTPSClientSession session{uri.getHost(), uri.getPort()};
 	HTTPRequest request{HTTPRequest::HTTP_POST, uri.getPathEtc(), HTTPMessage::HTTP_1_1};
