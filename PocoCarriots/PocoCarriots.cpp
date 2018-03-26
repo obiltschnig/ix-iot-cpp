@@ -22,7 +22,6 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
 	jsonStream <<
         "{"
             "\"protocol\": \"v2\","
-            "\"checksum\": \"\","
             "\"device\": \"" << device << "\","
             "\"at\": \"now\","
             "\"data\": {"
