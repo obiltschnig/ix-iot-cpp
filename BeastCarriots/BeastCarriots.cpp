@@ -5,8 +5,6 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <cstdlib>
-#include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -66,7 +64,7 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
 		pt::ptree pt;
 		std::istringstream bstr(res.body());
 		pt::read_json(bstr, pt);
-		const auto& respPt = pt.get_child("response");
+		const auto& respPt = pt.get_child("response"s);
   		const auto resp = respPt.get_value<std::string>();
 		throw std::runtime_error(resp);
 	}
