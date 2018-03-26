@@ -3,7 +3,6 @@
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/JSON/Parser.h>
 #include <Poco/URI.h>
-#include <string>
 #include <sstream>
 #include <iostream>
 
@@ -11,7 +10,6 @@ using namespace std::literals::string_literals;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPMessage;
-using Poco::Dynamic::Var;
 namespace JSON = Poco::JSON;
 
 void sendTemperature(const std::string& apiKey, const std::string device, float temperature)
@@ -28,7 +26,7 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
                 "\"temperature\":" << temperature <<
             "}"
         "}";
-	const std::string json{jsonStream.str()};
+	std::string json{jsonStream.str()};
 
 	Poco::Net::HTTPSClientSession session{uri.getHost(), uri.getPort()};
 	HTTPRequest request{HTTPRequest::HTTP_POST, uri.getPathEtc(), HTTPMessage::HTTP_1_1};
