@@ -1,0 +1,8 @@
+[requires]
+ paho-c/1.2.0@conan/stable
+
+[options]
+ paho-c:SSL=True
+
+[generators]
+ cmake

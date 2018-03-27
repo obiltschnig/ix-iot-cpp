@@ -12,21 +12,26 @@ using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPMessage;
 namespace JSON = Poco::JSON;
 
+std::string toJSON(const JSON::Object& obj)
+{
+	std::ostringstream jsonStream;
+	obj.stringify(jsonStream);
+	return jsonStream.str();
+}
+
 void sendTemperature(const std::string& apiKey, const std::string device, float temperature)
 {
 	const Poco::URI uri{"https://api.carriots.com/streams"s};
 
-	std::ostringstream jsonStream;
-	jsonStream <<
-        "{"
-            "\"protocol\": \"v2\","
-            "\"device\": \"" << device << "\","
-            "\"at\": \"now\","
-            "\"data\": {"
-                "\"temperature\":" << temperature <<
-            "}"
-        "}";
-	const auto json{jsonStream.str()};
+	JSON::Object obj;
+	obj.set("protocol"s, "v2"s);
+	obj.set("device"s, device);
+	obj.set("at"s, "now"s);
+	JSON::Object data;
+	data.set("temperature"s, temperature);
+	obj.set("data"s, data);
+
+	const auto json{toJSON(obj)};
 
 	Poco::Net::HTTPSClientSession session{uri.getHost(), uri.getPort()};
 	HTTPRequest request{HTTPRequest::HTTP_POST, uri.getPathEtc(), HTTPMessage::HTTP_1_1};
@@ -39,12 +44,12 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
 	HTTPResponse response;
 	std::istream& istr = session.receiveResponse(response);
 
-	JSON::Parser parser;
-	const auto var = parser.parse(istr);
-	const auto pObject = var.extract<JSON::Object::Ptr>();
-	const auto message = pObject->getValue<std::string>("response"s);
 	if (response.getStatus() != HTTPResponse::HTTP_OK)
+	{
+		const auto pObject = JSON::Parser().parse(istr).extract<JSON::Object::Ptr>();
+		const auto message = pObject->getValue<std::string>("response"s);
 		throw Poco::IOException("Request failed"s, message);
+	}
 }
 
 int main(int argc, char** argv)

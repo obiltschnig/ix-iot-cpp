@@ -5,7 +5,6 @@
 
 using namespace std::literals::string_literals;
 
-const int MQTT_KEEP_ALIVE_SECS = 30;
 const int MQTT_TIMEOUT_MSECS = 10000;
 
 void sendTemperature(const std::string& apiKey, const std::string device, float temperature)
@@ -32,10 +31,7 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
     sslOptions.enableServerCertAuth = false;
 
     MQTTClient_connectOptions options = MQTTClient_connectOptions_initializer;
-    options.keepAliveInterval = MQTT_KEEP_ALIVE_SECS;
-    options.cleansession = true;
     options.username = apiKey.c_str();
-    options.password = nullptr;
     options.ssl = &sslOptions;
 
     rc = MQTTClient_connect(client, &options);
@@ -48,8 +44,6 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
     MQTTClient_message message = MQTTClient_message_initializer;
     message.payload = const_cast<char*>(json.data());
     message.payloadlen = json.length();
-    message.qos = 0;
-    message.retained = false;
 
     MQTTClient_deliveryToken token;
     rc = MQTTClient_publishMessage(client, topic.c_str(), &message, &token);
@@ -65,10 +59,6 @@ void sendTemperature(const std::string& apiKey, const std::string device, float 
 
 int main(int argc, char** argv)
 {
-	MQTTClient_init_options options = MQTTClient_init_options_initializer;
-	options.do_openssl_init = true;
-	MQTTClient_global_init(&options);
-
     const auto apiKey{"ce3a2a76dbd871f0ef773e21bf79a49cae2f4d8a27cf463c9a0508cd92a6e5b5"s};
     const auto device{"RaspberryPi2@obiltschnig.obiltschnig"s};
 
